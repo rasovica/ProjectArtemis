@@ -36,12 +36,14 @@ public class ObjectPlacer : MonoBehaviour {
             while (x < gridX) {
                 float xCoord = xOrg + x / gridX * scale;
                 float yCoord = yOrg + y / gridY * scale;
-                float sample = Mathf.PerlinNoise(xCoord, yCoord);
+                float sample = Mathf.Clamp(Mathf.Pow(Mathf.PerlinNoise(xCoord * 16.623343434329f, yCoord * 15.232343432323f), Mathf.PerlinNoise(xCoord, yCoord)), 0, 1);
 
-                if (sample < Random.Range(-100.0f, 1.0f)) {
+                if (sample < procentageOfConifers) {
                     int index = (int)Range(sample, 0, 1, 0, conifers.Length);
                     float treeX = Range(x, 0, gridX, -gridX / 2, gridX / 2);
                     float treeY = Range(y, 0, gridY, -gridY / 2, gridY / 2);
+
+                    Debug.Log(index);
 
                     GameObject tree = Instantiate(conifers[index], new Vector3(treeX, 0, treeY), Quaternion.identity);
                     tree.transform.parent = conifersObject.transform;
