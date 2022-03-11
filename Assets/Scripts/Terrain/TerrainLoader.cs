@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -11,12 +12,10 @@ enum TerrainTypes: int {
 
 public class TerrainLoader : MonoBehaviour {
     public Tilemap tilemap;
+    public BoundsInt bounds;
+
     public GameObject[] grassTiles;
     public GameObject[] treeTiles;
-
-	void Start () {
-
-	}
 
     public void LoadTerrain (LevelData levelDataProp = null) {
         tilemap.ClearAllTiles();
@@ -30,7 +29,7 @@ public class TerrainLoader : MonoBehaviour {
             levelData = levelDataProp;
         }
 
-        
+        Debug.Log(string.Format("Number of tiles: {0}", levelData.tiles.Length));
 
         foreach (LevelData.LevelDataTile dataTile in levelData.tiles) {            
             Tile tile = (Tile) ScriptableObject.CreateInstance(typeof(Tile));
@@ -47,5 +46,29 @@ public class TerrainLoader : MonoBehaviour {
 
             tilemap.SetTile(new Vector3Int(dataTile.cords[0], dataTile.cords[1], 0), tile);
         }
+    }
+
+    public LevelData GenerateTerrain() {
+        LevelData levelData = new LevelData();
+        LevelData.LevelDataTile[] tiles = new LevelData.LevelDataTile[100 * 100];
+        levelData.tiles = tiles;
+        int index = 0;
+
+        foreach (Vector3Int position in bounds.allPositionsWithin) {
+            LevelData.LevelDataTile tile = new LevelData.LevelDataTile();
+            tile.id = 0;
+            tile.cords = new int[] {position.x, position.y};
+            levelData.tiles[index] = tile;
+            index = index + 1;
+        }
+        levelData.tiles = tiles;
+
+        return levelData;
+    }
+
+    public void PlaceTerrain() {
+        LevelData levelData = GenerateTerrain();
+
+        LoadTerrain(levelData);
     }
 }

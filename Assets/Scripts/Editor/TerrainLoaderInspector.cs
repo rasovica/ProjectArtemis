@@ -13,5 +13,9 @@ public class TerrainLoaderInspector : Editor {
         if (GUILayout.Button("Load")) {
             terrainLoader.LoadTerrain();
         }
+
+        if (GUILayout.Button("Generate")) {
+            terrainLoader.PlaceTerrain();
+        }
     }
 }
